@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>StarTap 🌟 — Web3 Rewards &amp; Tapper</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Adsgram Official SDK -->
+<script src="https://sad.min.js?v=2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════
+   StarTap 🌟 — مینی‌اپ رسمی و پیشرفته تلگرام
+   • هیرو کارت آبی-نیلی با بالانس ۵.۰۰$
+   • بخش Invite با نمایش بزرگ و فوق‌العاده جذاب پاداش +$2.00
+   • نوار ۳ تایی ناوبری شناور در پایین صفحه: [ Earn ] [ Invite ] [ Withdraw ]
+   • دیتابیس فایربیس: https://startap-1d541-default-rtdb.firebaseio.com/
+   • ربات: @StarTap0_Bot
+   • کانال رسمی: https://t.me/StarTap_Earn
+   • کانال واریزی‌ها: https://t.me/StarTap_Payout
+   • تبدیل ۱۰۰ ستاره = ۰.۱۰$ | حداقل برداشت ۴۰$ | شارژ ۲۰ تبلیغ در ۵ ساعت
+   ═══════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg-gradient:linear-gradient(160deg,#eef2ff 0%,#fef2f7 40%,#e0f2fe 75%,#f5f0ff 100%);
+  --card-bg:rgba(255,255,255,0.95);
+  --card-border:rgba(255,255,255,0.95);
+  --text-color:#1e293b;
+  --muted-color:#64748b;
+  --primary-color:#6366f1;
+  --blue-color:#3b82f6;
+  --gold-color:#f59e0b;
+  --green-color:#10b981;
+  --red-color:#ef4444;
+  --shadow-soft:0 12px 32px rgba(99,102,241,0.12);
+  --shadow-sm:0 4px 14px rgba(99,102,241,0.06);
+  --radius-xl:24px;
+  --radius-lg:16px;
+}
+html,body{
+  min-height:100%;
+  background:var(--bg-gradient);
+  color:var(--text-color);
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  overflow-x:hidden;
+}
+body{
+  display:flex;
+  flex-direction:column;
+  padding-bottom:105px; /* فضا برای نوار ناوبری ثابت در پایین صفحه */
+}
+
+/* Background floating decorative pastel blur orbs */
+.bg-decorations{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+.blur-orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(55px);
+  opacity:0.65;
+}
+.orb-purple{width:260px;height:260px;background:radial-gradient(circle,#c7d2fe,#a5b4fc);top:-60px;left:-60px}
+.orb-pink{width:240px;height:240px;background:radial-gradient(circle,#fbcfe8,#f472b6);top:200px;right:-60px}
+.orb-cyan{width:220px;height:220px;background:radial-gradient(circle,#bae6fd,#38bdf8);bottom:-60px;left:20px}
+
+/* ════════ HEADER (دقیقاً مطابق عکس ارسالی) ════════ */
+.app-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,0.8);
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,0.02);
+}
+.header-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand-star-badge{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#f59e0b,#fbbf24);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 16px rgba(245,158,11,0.35);
+}
+.brand-star-badge svg{width:22px;height:22px;fill:#fff;stroke:#000;stroke-width:0.5}
+.brand-title-txt{
+  font-size:1.2rem;
+  font-weight:900;
+  letter-spacing:-0.4px;
+}
+.brand-title-txt span{
+  background:linear-gradient(90deg,#f59e0b,#ec4899);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.header-tools{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.tool-pill{
+  background:#fff;
+  border:1px solid rgba(226,232,240,0.9);
+  border-radius:999px;
+  padding:6px 12px;
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--text-color);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  box-shadow:var(--shadow-sm);
+}
+
+/* ════════ MAIN WRAPPER ════════ */
+.main-wrapper{
+  position:relative;
+  z-index:1;
+  max-width:440px;
+  margin:0 auto;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+}
+
+/* ════════ HERO BALANCE CARD (رنگ دقیق آبی-نیلی درخشان) ════════ */
+.balance-card{
+  background:linear-gradient(135deg,#4f46e5 0%,#3b82f6 45%,#0284c7 75%,#00b4d8 100%);
+  border-radius:var(--radius-xl);
+  padding:22px 18px 20px;
+  color:#fff;
+  box-shadow:0 14px 36px rgba(59,130,246,0.28);
+  position:relative;
+  overflow:hidden;
+}
+.bal-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.active-wallet-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,0.22);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.38);
+  color:#fff;
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:0.65rem;
+  font-weight:800;
+  letter-spacing:0.4px;
+}
+.active-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#4ade80;
+  box-shadow:0 0 8px #4ade80;
+  animation:pulseGreen 1.6s infinite;
+}
+@keyframes pulseGreen{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.2)}}
+.user-tag{
+  font-size:0.72rem;
+  font-weight:700;
+  color:rgba(255,255,255,0.85);
+  font-family:'JetBrains Mono',monospace;
+}
+
+.bal-center-content{
+  text-align:center;
+  padding:4px 0 6px;
+}
+.bal-label{
+  font-size:0.72rem;
+  font-weight:800;
+  color:rgba(255,255,255,0.82);
+  letter-spacing:0.8px;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.bal-amount{
+  font-family:'JetBrains Mono',monospace;
+  font-size:2.8rem;
+  font-weight:900;
+  letter-spacing:-1px;
+  color:#fff;
+  line-height:1.05;
+  margin:2px 0 6px;
+}
+.bal-desc{
+  font-size:0.75rem;
+  font-weight:600;
+  color:rgba(255,255,255,0.88);
+}
+
+/* ════════ HERO TAP & ENERGY ARENA ════════ */
+.tap-arena-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius-xl);
+  padding:18px 16px;
+  box-shadow:var(--shadow-soft);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  position:relative;
+}
+
+.tap-meta-header{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.stars-badge-pill{
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:1px solid #fcd34d;
+  color:#b45309;
+  font-weight:900;
+  font-size:0.8rem;
+  padding:5px 12px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.energy-badge-pill{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  color:#1d4ed8;
+  font-size:0.75rem;
+  font-weight:800;
+  padding:5px 10px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+/* سکه ستاره لمسی ۳ بعدی */
+.tap-star-hero-btn{
+  position:relative;
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#f59e0b 0%,#fbbf24 50%,#d97706 100%);
+  border:4px solid #fff;
+  box-shadow:0 12px 36px rgba(245,158,11,0.45), inset 0 -6px 12px rgba(180,83,9,0.5), inset 0 6px 12px rgba(254,240,138,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition:transform 0.08s cubic-bezier(0.175,0.885,0.32,1.275);
+  margin:10px 0 16px;
+}
+.tap-star-hero-btn:active{
+  transform:scale(0.92);
+}
+.tap-star-hero-btn svg{
+  width:72px;
+  height:72px;
+  fill:#fff;
+  filter:drop-shadow(0 4px 10px rgba(180,83,9,0.5));
+}
+
+.floating-tap-num{
+  position:absolute;
+  color:#f59e0b;
+  font-size:1.4rem;
+  font-weight:900;
+  font-family:'JetBrains Mono',monospace;
+  pointer-events:none;
+  animation:floatUpStar 0.8s ease-out forwards;
+}
+@keyframes floatUpStar{
+  0%{opacity:1;transform:translateY(0) scale(0.8)}
+  100%{opacity:0;transform:translateY(-60px) scale(1.3)}
+}
+
+/* Energy meter bar */
+.energy-bar-wrap{
+  width:100%;
+  margin-bottom:12px;
+}
+.energy-meter-track{
+  width:100%;
+  height:8px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+  position:relative;
+}
+.energy-meter-fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#3b82f6,#6366f1);
+  border-radius:999px;
+  transition:width 0.2s ease;
+}
+
+/* Dual Action Buttons */
+.tap-actions-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.btn-convert-stars{
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:10px 8px;
+  font-size:0.75rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(245,158,11,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  transition:all 0.15s;
+}
+.btn-convert-stars:active{transform:scale(0.96)}
+
+.btn-refill-energy{
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:10px 8px;
+  font-size:0.75rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 14px rgba(37,99,235,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  transition:all 0.15s;
+}
+.btn-refill-energy:active{transform:scale(0.96)}
+.btn-refill-energy:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+  transform:none;
+  background:#94a3b8;
+  box-shadow:none;
+}
+
+/* 5-Hour Ads Limit Live Info */
+.ads-window-info-row{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:0.65rem;
+  font-weight:700;
+  color:var(--muted-color);
+  margin-top:8px;
+  padding:0 2px;
+}
+.timer-pill{
+  font-family:'JetBrains Mono',monospace;
+  background:#f1f5f9;
+  padding:2px 6px;
+  border-radius:6px;
+  color:#475569;
+}
+
+/* ════════ ۳ مرحله ساده کارکرد ════════ */
+.guide-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius-xl);
+  padding:14px 16px;
+  box-shadow:var(--shadow-soft);
+}
+.guide-head{
+  font-size:0.78rem;
+  font-weight:800;
+  color:var(--text-color);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.guide-steps-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+}
+.g-step-item{
+  background:#fff;
+  border:1px solid #f1f5f9;
+  border-radius:12px;
+  padding:8px 6px;
+  text-align:center;
+}
+.g-step-icon{font-size:1.1rem;margin-bottom:2px}
+.g-step-num{font-size:0.6rem;font-weight:800;color:var(--primary-color);text-transform:uppercase}
+.g-step-txt{font-size:0.68rem;font-weight:700;color:var(--text-color);margin-top:2px;line-height:1.3}
+
+/* ════════ CHANNELS (دقیقاً ۲ کانال رسمی StarTap) ════════ */
+.content-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius-xl);
+  padding:16px;
+  box-shadow:var(--shadow-soft);
+}
+.content-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.content-card-title{
+  font-size:0.85rem;
+  font-weight:800;
+  color:var(--text-color);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.content-tag{
+  background:#eef2ff;
+  color:var(--primary-color);
+  font-size:0.68rem;
+  font-weight:800;
+  padding:3px 8px;
+  border-radius:999px;
+}
+
+.channel-row{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:var(--radius-lg);
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  box-shadow:var(--shadow-sm);
+}
+.channel-row:last-child{margin-bottom:0}
+.channel-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.ch-orb-badge{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#e0e7ff,#c7d2fe);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--primary-color);
+}
+.ch-orb-badge svg{width:20px;height:20px;stroke:currentColor}
+.ch-title-txt{font-size:0.78rem;font-weight:800;color:var(--text-color)}
+.ch-reward-val{font-size:0.7rem;font-weight:800;color:var(--green-color);margin-top:2px}
+
+.btn-ch-join{
+  background:linear-gradient(135deg,var(--primary-color),#4f46e5);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:8px 16px;
+  font-size:0.72rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(99,102,241,0.25);
+  transition:all 0.15s;
+}
+.btn-ch-join:active{transform:scale(0.95)}
+.btn-ch-done{
+  background:#ecfdf5;
+  border:1px solid #a7f3d0;
+  color:#059669;
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:0.72rem;
+  font-weight:800;
+  cursor:default;
+}
+
+/* ════════ HUGE EYE-CATCHING INVITE REWARD (+$2.00 بزرگ و چشمگیر) ════════ */
+.invite-giant-reward{
+  background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 50%,#fae8ff 100%);
+  border:2px dashed #a855f7;
+  border-radius:22px;
+  padding:16px 12px 14px;
+  margin:10px 0 16px;
+  box-shadow:0 8px 24px rgba(168,85,247,0.14);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.giant-reward-number{
+  font-family:'JetBrains Mono',monospace;
+  font-size:3.4rem;
+  font-weight:900;
+  letter-spacing:-1.5px;
+  line-height:1;
+  background:linear-gradient(135deg,#7c3aed 0%,#a855f7 40%,#ec4899 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:drop-shadow(0 4px 12px rgba(124,58,237,0.25));
+  animation:glowPulse 2s infinite alternate;
+}
+@keyframes glowPulse{
+  0%{transform:scale(1)}
+  100%{transform:scale(1.03)}
+}
+.giant-reward-tag{
+  font-size:0.82rem;
+  font-weight:900;
+  letter-spacing:1px;
+  color:#6b21a8;
+  margin-top:6px;
+  text-transform:uppercase;
+}
+
+.invite-stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+}
+.inv-stat-card{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:12px 10px;
+  text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.inv-stat-label{
+  font-size:0.65rem;
+  font-weight:700;
+  color:var(--muted-color);
+  margin-bottom:2px;
+}
+.inv-stat-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.35rem;
+  font-weight:900;
+}
+.inv-stat-val.purple{color:#7c3aed}
+.inv-stat-val.amber{color:#f59e0b}
+
+.invite-box{
+  background:#fff;
+  border:1.5px dashed #cbd5e1;
+  border-radius:var(--radius-lg);
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:10px;
+}
+.invite-link-txt{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.75rem;
+  color:var(--primary-color);
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  direction:ltr;
+}
+.btn-copy{
+  background:linear-gradient(135deg,var(--primary-color),#4f46e5);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:8px 14px;
+  font-size:0.75rem;
+  font-weight:800;
+  cursor:pointer;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.btn-share-telegram-big{
+  width:100%;
+  background:linear-gradient(135deg,#0088cc 0%,#00a8e8 100%);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:15px;
+  font-family:inherit;
+  font-size:0.95rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,136,204,0.32);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:all 0.15s;
+}
+.btn-share-telegram-big:active{transform:scale(0.98)}
+
+.invite-perks-list{
+  margin-top:14px;
+  background:#f8fafc;
+  border:1px solid #f1f5f9;
+  border-radius:16px;
+  padding:12px 14px;
+  text-align:left;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+[dir="rtl"] .invite-perks-list{text-align:right}
+.perk-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--text-color);
+}
+.perk-icon{font-size:1.1rem;flex-shrink:0}
+
+/* ════════ WITHDRAW TAB (حداقل ۴۰$) ════════ */
+.withdraw-methods-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+}
+.method-card-pill{
+  background:#fff;
+  border:1.5px solid #e2e8f0;
+  border-radius:14px;
+  padding:10px 4px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.method-card-pill.active{
+  border-color:var(--primary-color);
+  background:#eef2ff;
+  box-shadow:0 0 14px rgba(99,102,241,0.18);
+}
+.m-icon-txt{font-size:1.3rem;margin-bottom:2px}
+.m-name-txt{font-size:0.65rem;font-weight:800}
+
+.withdraw-input-box{
+  width:100%;
+  background:#fff;
+  border:1.2px solid #cbd5e1;
+  border-radius:14px;
+  padding:12px 14px;
+  color:var(--text-color);
+  font-family:inherit;
+  font-size:0.88rem;
+  outline:none;
+  margin-bottom:10px;
+}
+.withdraw-input-box:focus{border-color:var(--primary-color)}
+
+.btn-submit-payout{
+  width:100%;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:15px;
+  font-family:inherit;
+  font-size:0.95rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(16,185,129,0.3);
+  transition:all 0.15s;
+}
+.btn-submit-payout:active{transform:scale(0.98)}
+
+/* ════════ FLOATING BOTTOM NAV (نوار ناوبری ۳ تایی فیکس شده در پایین صفحه) ════════ */
+.floating-tab-bar{
+  position:fixed;
+  bottom:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 32px);
+  max-width:420px;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.95);
+  border-radius:999px;
+  padding:6px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+  box-shadow:0 12px 36px rgba(99,102,241,0.18);
+  z-index:900;
+}
+.tab-btn-item{
+  border:none;
+  background:transparent;
+  border-radius:999px;
+  padding:9px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  color:var(--muted-color);
+  font-size:0.72rem;
+  font-weight:800;
+  cursor:pointer;
+  transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.tab-btn-item svg{width:20px;height:20px;stroke:currentColor}
+.tab-btn-item.active{
+  background:linear-gradient(135deg,var(--primary-color),#4f46e5);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(99,102,241,0.35);
+}
+.tab-btn-item.active svg{stroke:#fff}
+
+/* ════════ FULL-SCREEN CHANNEL GATE LOCK ════════ */
+.gate-lock-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.85);
+  backdrop-filter:blur(24px);
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.gate-lock-modal.show{display:flex}
+.gate-lock-card{
+  background:#fff;
+  border-radius:var(--radius-xl);
+  padding:24px 20px;
+  max-width:380px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 24px 48px rgba(0,0,0,0.3);
+  animation:popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes popIn{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.lock-icon-orb{
+  width:64px;
+  height:64px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#f59e0b,#fbbf24);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  box-shadow:0 10px 24px rgba(245,158,11,0.35);
+  margin-bottom:12px;
+}
+.lock-icon-orb svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2.2}
+.lock-title{font-size:1.15rem;font-weight:900;color:var(--text-color);margin-bottom:6px}
+.lock-desc{font-size:0.75rem;font-weight:600;color:var(--muted-color);line-height:1.5;margin-bottom:16px}
+
+.lock-channel-btn{
+  background:#f8fafc;
+  border:1.5px solid #e2e8f0;
+  border-radius:14px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.lock-channel-btn:active{transform:scale(0.98)}
+.lock-channel-btn.joined{
+  background:#ecfdf5;
+  border-color:#10b981;
+}
+.lock-channel-info{display:flex;align-items:center;gap:8px;font-size:0.78rem;font-weight:800;color:var(--text-color)}
+.lock-badge-state{font-size:0.7rem;font-weight:800;color:var(--primary-color)}
+.lock-channel-btn.joined .lock-badge-state{color:#059669}
+
+.btn-unlock-app{
+  width:100%;
+  background:linear-gradient(135deg,var(--primary-color),#4f46e5);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:14px;
+  font-size:0.88rem;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(99,102,241,0.3);
+  margin-top:10px;
+}
+
+/* ════════ ADSGRAM 100% REWARDED CONSENT MODAL ════════ */
+.modal-overlay-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.6);
+  backdrop-filter:blur(8px);
+  z-index:999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.modal-overlay-bg.show{display:flex}
+.modal-inner-card{
+  background:#fff;
+  border-radius:var(--radius-xl);
+  padding:20px;
+  max-width:360px;
+  width:100%;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+  text-align:center;
+}
+
+/* ════════ LANGUAGE SELECTION MODAL (۱۰ زبان زنده) ════════ */
+.lang-grid-2col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:12px 0;
+}
+.lang-select-btn{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:0.75rem;
+  font-weight:800;
+  color:var(--text-color);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+}
+.lang-select-btn.active{
+  border-color:var(--primary-color);
+  background:#eef2ff;
+  color:var(--primary-color);
+}
+
+/* ════════ TOAST ════════ */
+.toast-msg{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%) translateY(-60px);
+  background:rgba(15,23,42,0.95);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:999px;
+  font-size:0.75rem;
+  font-weight:800;
+  box-shadow:0 10px 24px rgba(0,0,0,0.2);
+  z-index:99999;
+  opacity:0;
+  transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+  pointer-events:none;
+  white-space:nowrap;
+}
+.toast-msg.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- Pastel Blur Orbs -->
+<div class="bg-decorations">
+  <div class="blur-orb orb-purple"></div>
+  <div class="blur-orb orb-pink"></div>
+  <div class="blur-orb orb-cyan"></div>
+</div>
+
+<!-- ════════ APP HEADER (دقیقاً مطابق عکس ارسالی) ════════ -->
+<header class="app-header">
+  <div class="header-brand">
+    <div class="brand-star-badge">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    </div>
+    <div>
+      <div class="brand-title-txt">Star<span>Tap</span> 🌟</div>
+    </div>
+  </div>
+  <div class="header-tools">
+    <button class="tool-pill" onclick="openLanguageModal()">
+      <span>🌐</span>
+      <span id="lang-code-display">EN</span>
+    </button>
+  </div>
+</header>
+
+<main class="main-wrapper">
+  <!-- ════════ HERO BALANCE CARD (رنگ دقیق آبی-نیلی درخشان) ════════ -->
+  <div class="balance-card">
+    <div class="bal-header-row">
+      <div class="active-wallet-pill"><span class="active-dot"></span><span>ACTIVE WALLET</span></div>
+      <div class="user-tag">ID: <span class="mono" id="user-uid-txt">...</span></div>
+    </div>
+    <div class="bal-center-content">
+      <div class="bal-label" id="txt-bal-label">AVAILABLE BALANCE</div>
+      <div class="bal-amount" id="user-balance-number">$5.00</div>
+      <div class="bal-desc" id="txt-bal-desc">Instant withdrawal to USDT or PayPal (Min $40)</div>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 1: TAP & REWARDS ════════ -->
+  <div id="view-tab-earn">
+    <!-- Star Tap Arena -->
+    <div class="tap-arena-card">
+      <div class="tap-meta-header">
+        <div class="stars-badge-pill">
+          <span>⭐</span>
+          <span id="stars-count-val">0 STARS</span>
+        </div>
+        <div class="energy-badge-pill">
+          <span>⚡</span>
+          <span id="energy-txt-display">100 / 100</span>
+        </div>
+      </div>
+
+      <!-- 3D Star Coin -->
+      <div class="tap-star-hero-btn" id="star-tap-btn" onclick="handleStarTap(event)">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+
+      <!-- Energy Bar -->
+      <div class="energy-bar-wrap">
+        <div class="energy-meter-track">
+          <div class="energy-meter-fill" id="energy-meter-fill" style="width:100%;"></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="tap-actions-grid">
+        <button class="btn-convert-stars" onclick="convertStarsToCash()">
+          <span id="txt-btn-convert">✨ 100 Stars = $0.10</span>
+        </button>
+        <button class="btn-refill-energy" id="refill-energy-btn" onclick="promptConsentForAd()">
+          <span id="txt-btn-refill">⚡ Refill (20/20 Left)</span>
+        </button>
+      </div>
+
+      <!-- 5-Hour Ads Limit Live Info -->
+      <div class="ads-window-info-row">
+        <span id="txt-refill-info">20 Ad Refills / 5 Hours</span>
+        <span class="timer-pill" id="ad-window-timer">Reset: 05:00:00</span>
+      </div>
+    </div>
+
+    <!-- ════════ ۳ مرحله ساده کارکرد ════════ -->
+    <div class="guide-card" style="margin-top:12px;">
+      <div class="guide-head">
+        <span>💡</span>
+        <span id="txt-guide-title">How It Works (3 Easy Steps)</span>
+      </div>
+      <div class="guide-steps-grid">
+        <div class="g-step-item">
+          <div class="g-step-icon">👆</div>
+          <div class="g-step-num">Step 1</div>
+          <div class="g-step-txt" id="txt-step1">Tap Star to collect stars</div>
+        </div>
+        <div class="g-step-item">
+          <div class="g-step-icon">🔄</div>
+          <div class="g-step-num">Step 2</div>
+          <div class="g-step-txt" id="txt-step2">100 Stars = $0.10 Cash</div>
+        </div>
+        <div class="g-step-item">
+          <div class="g-step-icon">💸</div>
+          <div class="g-step-num">Step 3</div>
+          <div class="g-step-txt" id="txt-step3">Withdraw at $40 to USDT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ تسک‌ها: دقیقاً فقط ۲ کانال رسمی StarTap ════════ -->
+    <div class="content-card" style="margin-top:12px;">
+      <div class="content-card-head">
+        <div class="content-card-title">
+          <span>📢</span>
+          <span id="txt-official-channels-title">Official Partner Channels</span>
+        </div>
+        <span class="content-tag" id="channels-badge-counter">0/2</span>
+      </div>
+
+      <!-- کانال ۱: StarTap Official Channel -->
+      <div class="channel-row">
+        <div class="channel-meta">
+          <div class="ch-orb-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M12 2l1.8 4.2L18 8l-4.2 1.8L12 14l-1.8-4.2L6 8l4.2-1.8z"/></svg>
+          </div>
+          <div>
+            <div class="ch-title-txt" id="txt-ch1-name">StarTap Official Channel ⭐</div>
+            <div class="ch-reward-val">+$0.50 Cash</div>
+          </div>
+        </div>
+        <button class="btn-ch-join" id="btn-join-ch1" onclick="handleChannelClick('c_startap', 'https://t.me/StarTap_Earn', 0.50, this)">
+          <span>Join</span>
+        </button>
+      </div>
+
+      <!-- کانال ۲: StarTap Payout Proofs -->
+      <div class="channel-row">
+        <div class="channel-meta">
+          <div class="ch-orb-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <div class="ch-title-txt" id="txt-ch2-name">StarTap Payout Proofs 📢</div>
+            <div class="ch-reward-val">+$0.50 Cash</div>
+          </div>
+        </div>
+        <button class="btn-ch-join" id="btn-join-ch2" onclick="handleChannelClick('c_payout', 'https://t.me/StarTap_Payout', 0.50, this)">
+          <span>Join</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 2: INVITE FRIENDS ($2.00 بزرگ و فوق‌العاده چشمگیر) ════════ -->
+  <div id="view-tab-invite" style="display:none;">
+    <div class="content-card" style="text-align:center;">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:#eef2ff;border:1px solid #c7d2fe;color:#4f46e5;font-size:0.75rem;font-weight:900;padding:4px 14px;border-radius:999px;margin-bottom:8px;">
+        <span>🎁</span>
+        <span>HIGH REWARD REFERRAL PROGRAM</span>
+      </div>
+
+      <div style="font-size:1.35rem;font-weight:900;color:var(--text-color);margin-bottom:4px;" id="txt-invite-title">
+        Invite Friends &amp; Earn
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted-color);margin-bottom:12px;" id="txt-inv-sub">
+        Get paid instantly for every single friend you invite to StarTap 🌟
+      </div>
+
+      <!-- مقدار بزرگ +$2.00 برای جلب توجه شدید کاربران -->
+      <div class="invite-giant-reward">
+        <div class="giant-reward-number">+$2.00</div>
+        <div class="giant-reward-tag">PER INVITED FRIEND</div>
+      </div>
+
+      <!-- آمار دعوت‌های کاربر -->
+      <div class="invite-stats-grid">
+        <div class="inv-stat-card">
+          <div class="inv-stat-label">Total Earned from Invites</div>
+          <div class="inv-stat-val purple" id="inv-total-earned-display">$0.00</div>
+        </div>
+        <div class="inv-stat-card">
+          <div class="inv-stat-label">Friends Invited</div>
+          <div class="inv-stat-val amber" id="inv-friends-count-display">0 Friends</div>
+        </div>
+      </div>
+
+      <!-- لینک دعوت با دکمه کپی -->
+      <div class="invite-box">
+        <div class="invite-link-txt" id="invite-link-val">https://t.me/StarTap0_Bot?start=...</div>
+        <button class="btn-copy" onclick="copyInviteLink()" id="txt-copy-btn">
+          <span>📋</span>
+          <span>Copy</span>
+        </button>
+      </div>
+
+      <!-- دکمه بزرگ اشتراک‌گذاری در تلگرام -->
+      <button class="btn-share-telegram-big" onclick="shareInviteLink()" id="txt-share-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <span>Share with Friends on Telegram</span>
+      </button>
+
+      <!-- مزایای رفرال -->
+      <div class="invite-perks-list">
+        <div class="perk-item">
+          <span class="perk-icon">⚡</span>
+          <span class="perk-txt">Instant $2.00 cash credited as soon as your friend starts the app</span>
+        </div>
+        <div class="perk-item">
+          <span class="perk-icon">♾️</span>
+          <span class="perk-txt">Unlimited invites — invite 10 friends and earn $20.00 cash!</span>
+        </div>
+        <div class="perk-item">
+          <span class="perk-icon">💳</span>
+          <span class="perk-txt">Withdraw your earnings directly to USDT or PayPal anytime</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ TAB 3: WITHDRAW ($40 MINIMUM) ════════ -->
+  <div id="view-tab-withdraw" style="display:none;">
+    <div class="content-card">
+      <div class="content-card-head">
+        <div class="content-card-title">
+          <span>💳</span>
+          <span id="txt-withdraw-title">Withdraw Funds</span>
+        </div>
+        <span class="content-tag" id="txt-min-tag">Min $40</span>
+      </div>
+
+      <div class="withdraw-methods-grid">
+        <div class="method-card-pill active" onclick="selectMethod(this, 'usdt_trc20')">
+          <div class="m-icon-txt">🟢</div>
+          <div class="m-name-txt">USDT TRC20</div>
+        </div>
+        <div class="method-card-pill" onclick="selectMethod(this, 'usdt_bep20')">
+          <div class="m-icon-txt">🟡</div>
+          <div class="m-name-txt">USDT BEP20</div>
+        </div>
+        <div class="method-card-pill" onclick="selectMethod(this, 'paypal')">
+          <div class="m-icon-txt">🅿️</div>
+          <div class="m-name-txt">PayPal</div>
+        </div>
+      </div>
+
+      <input type="number" id="w-amount" class="withdraw-input-box" placeholder="Withdrawal Amount ($40.00)" min="40" step="1"/>
+      <input type="text" id="w-addr" class="withdraw-input-box" placeholder="Wallet Address / PayPal Email"/>
+
+      <button class="btn-submit-payout" onclick="submitWithdraw()" id="txt-w-btn">
+        Submit Withdrawal Request
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- ════════ FLOATING BOTTOM NAV (نوار ناوبری ۳ تایی فیکس شده در پایین صفحه) ════════ -->
+<nav class="floating-tab-bar">
+  <button class="tab-btn-item active" onclick="switchTab('earn')" id="btn-tab-earn">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span id="txt-nav-earn">Earn</span>
+  </button>
+  <button class="tab-btn-item" onclick="switchTab('invite')" id="btn-tab-invite">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span id="txt-nav-invite">Invite</span>
+  </button>
+  <button class="tab-btn-item" onclick="switchTab('withdraw')" id="btn-tab-withdraw">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    <span id="txt-nav-withdraw">Withdraw</span>
+  </button>
+</nav>
+
+<!-- ════════ FULL-SCREEN CHANNEL GATE LOCK ════════ -->
+<div class="gate-lock-modal" id="channel-gate-lock">
+  <div class="gate-lock-card">
+    <div class="lock-icon-orb">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="lock-title" id="txt-lock-title">Channel Verification Required</div>
+    <div class="lock-desc" id="txt-lock-desc">
+      You must join both official channels below to unlock the app, start tapping stars, and claim your $5.00 Welcome Bonus!
+    </div>
+
+    <!-- Lock Channel 1 -->
+    <div class="lock-channel-btn" id="lock-ch1-box" onclick="handleLockChannelClick('lock_ch1', 'https://t.me/StarTap_Earn')">
+      <div class="lock-channel-info">
+        <span>⭐</span>
+        <span id="txt-lock-ch1">1. StarTap Official Channel ⭐</span>
+      </div>
+      <span class="lock-badge-state" id="lock-ch1-status">Join &rarr;</span>
+    </div>
+
+    <!-- Lock Channel 2 -->
+    <div class="lock-channel-btn" id="lock-ch2-box" onclick="handleLockChannelClick('lock_ch2', 'https://t.me/StarTap_Payout')">
+      <div class="lock-channel-info">
+        <span>📢</span>
+        <span id="txt-lock-ch2">2. StarTap Payout Proofs 📢</span>
+      </div>
+      <span class="lock-badge-state" id="lock-ch2-status">Join &rarr;</span>
+    </div>
+
+    <button class="btn-unlock-app" onclick="verifyAndUnlockApp()" id="txt-unlock-btn">
+      🔓 Check &amp; Unlock App
+    </button>
+  </div>
+</div>
+
+<!-- ════════ ADSGRAM 100% REWARDED CONSENT MODAL ════════ -->
+<div class="modal-overlay-bg" id="adsgram-consent-modal" onclick="if(event.target===this)closeConsentModal()">
+  <div class="modal-inner-card">
+    <div style="font-size:2rem;margin-bottom:8px;">⚡</div>
+    <div style="font-size:1.05rem;font-weight:900;margin-bottom:6px;" id="txt-modal-refill-head">Refill 100% Energy?</div>
+    <div style="font-size:0.75rem;color:var(--muted-color);line-height:1.4;margin-bottom:16px;" id="txt-modal-refill-desc">
+      Watch a short sponsor video to instantly refill 100% energy and receive +50 bonus stars!
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:8px;">
+      <button class="tool-pill" style="justify-content:center;padding:12px;" onclick="closeConsentModal()" id="txt-modal-cancel">Cancel</button>
+      <button class="btn-ch-join" style="padding:12px;" onclick="playAdsgramRewardedAd()" id="txt-modal-watch">Watch Video</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ LANGUAGE SELECTION MODAL (۱۰ زبان زنده) ════════ -->
+<div class="modal-overlay-bg" id="lang-modal" onclick="if(event.target===this)closeLangModal()">
+  <div class="modal-inner-card">
+    <div style="font-size:1rem;font-weight:900;text-align:center;">Choose Language</div>
+    <div class="lang-grid-2col" id="lang-grid-container"></div>
+    <button class="btn-ch-join" style="width:100%;padding:10px;" onclick="closeLangModal()">OK</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-msg" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE & INITIALIZATION
+// ═══════════════════════════════════════════════════════
+const TG = window.Telegram?.WebApp;
+TG?.ready();
+TG?.expand();
+
+// Realtime Firebase Database URL
+const DB_URL = 'https://startap-1d541-default-rtdb.firebaseio.com/';
+const BOT_USERNAME = 'StarTap0_Bot'; // ربات رسمی StarTap
+const PAYOUT_BOT_TOKEN = '8986952597:AAFDnAUIVlnNwiB2RA6uSNhGJFVcR-tFusw';
+const PAYOUT_CHANNEL_ID = '@StarTap_Payout'; // کانال رسمی واریزی‌ها: https://t.me/StarTap_Payout
+
+const ADSGRAM_BLOCK_ID = '41573';
+let AdController = null;
+if(window.Adsgram){
+  try{ AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); }catch(e){}
+}
+
+let userId = '', userName = 'User';
+let referrerId = '';
+
+function initUser(){
+  if(TG?.initDataUnsafe?.user){
+    const u = TG.initDataUnsafe.user;
+    userId = String(u.id || '');
+    userName = u.first_name || u.username || 'User';
+  } else {
+    userId = localStorage.getItem('st_uid') || String(Math.floor(Math.random()*9e8+1e8));
+    localStorage.setItem('st_uid', userId);
+    userName = 'Demo User';
+  }
+
+  // Check referral start_param
+  const startParam = TG?.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('start') || new URLSearchParams(window.location.search).get('startapp');
+  if(startParam && String(startParam) !== String(userId)){
+    referrerId = String(startParam);
+  }
+
+  document.getElementById('user-uid-txt').textContent = userId;
+}
+initUser();
+
+// App State (Default language is ENGLISH on startup!)
+let currentLang = 'en';
+let balance = 5.00; // $5 Welcome Bonus
+let completedTasks = [];
+let stars = 0;
+let energy = 100;
+const MAX_ENERGY = 100;
+let selectedMethod = 'usdt_trc20';
+let lockCh1Joined = false;
+let lockCh2Joined = false;
+let inviteCount = 0;
+let inviteEarned = 0;
+let isGateUnlocked = false;
+
+// ═══════════════════════════════════════════════════════
+//  CHANNEL GATE LOCK (قفل صفحه تا زمان عضویت در ۲ کانال)
+// ═══════════════════════════════════════════════════════
+function checkGateLockState(){
+  const isUnlocked = localStorage.getItem('st_unlocked_'+userId) === 'true' || isGateUnlocked;
+  if(isUnlocked){
+    document.getElementById('channel-gate-lock').classList.remove('show');
+  } else {
+    document.getElementById('channel-gate-lock').classList.add('show');
+  }
+}
+
+function handleLockChannelClick(id, url){
+  if(TG) TG.openTelegramLink(url);
+  else window.open(url, '_blank');
+
+  setTimeout(()=>{
+    if(id === 'lock_ch1'){
+      lockCh1Joined = true;
+      document.getElementById('lock-ch1-box').classList.add('joined');
+      document.getElementById('lock-ch1-status').textContent = '✓ Joined';
+      if(!completedTasks.includes('c_startap')) completedTasks.push('c_startap');
+    } else if(id === 'lock_ch2'){
+      lockCh2Joined = true;
+      document.getElementById('lock-ch2-box').classList.add('joined');
+      document.getElementById('lock-ch2-status').textContent = '✓ Joined';
+      if(!completedTasks.includes('c_payout')) completedTasks.push('c_payout');
+    }
+  }, 2000);
+}
+
+function verifyAndUnlockApp(){
+  if(!lockCh1Joined || !lockCh2Joined){
+    showToast(currentLang==='fa'?'لطفاً ابتدا در هر ۲ کانال عضو شوید!':'Please join both channels first!');
+    return;
+  }
+
+  isGateUnlocked = true;
+  localStorage.setItem('st_unlocked_'+userId, 'true');
+  document.getElementById('channel-gate-lock').classList.remove('show');
+  showToast(currentLang==='fa'?'🎉 قفل برنامه باز شد! خوش آمدید':'🎉 App Unlocked! Welcome!');
+  logActivity('gate_unlock', 'Joined official channels and unlocked app', 5.00);
+  syncFirebase();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADS LIMIT: 20 ADS EVERY 5 HOURS (در هر ۵ ساعت ۲۰ تبلیغ)
+// ═══════════════════════════════════════════════════════
+const MAX_ADS_WINDOW = 20;
+const WINDOW_DURATION_5H = 5 * 60 * 60 * 1000; // 5 Hours in ms
+
+function getAdState(){
+  let s = { count: 0, reset: Date.now() + WINDOW_DURATION_5H };
+  try{
+    const saved = localStorage.getItem('st_ad_state_'+userId);
+    if(saved) s = JSON.parse(saved);
+  }catch(e){}
+  if(Date.now() >= s.reset){
+    s.count = 0;
+    s.reset = Date.now() + WINDOW_DURATION_5H;
+    saveAdState(s);
+  }
+  return s;
+}
+
+function saveAdState(s){
+  try{ localStorage.setItem('st_ad_state_'+userId, JSON.stringify(s)); }catch(e){}
+}
+
+function updateAdsUI(){
+  const s = getAdState();
+  const count = s.count || 0;
+  const remaining = Math.max(0, MAX_ADS_WINDOW - count);
+
+  const refillBtn = document.getElementById('refill-energy-btn');
+  if(count >= MAX_ADS_WINDOW){
+    refillBtn.disabled = true;
+    refillBtn.querySelector('span').textContent = (currentLang==='fa'?'سقف ۲۰ تبلیغ پر شد':'20/20 Limit Reached');
+  } else {
+    refillBtn.disabled = false;
+    refillBtn.querySelector('span').textContent = (currentLang==='fa'?`⚡ شارژ انرژی (${remaining} باقی‌مانده)`:`⚡ Refill (${remaining} Left)`);
+  }
+}
+
+// 5-Hour Countdown Timer
+setInterval(()=>{
+  const s = getAdState();
+  const left = Math.max(0, s.reset - Date.now());
+  const h = Math.floor(left / 3600000);
+  const m = Math.floor((left % 3600000) / 60000);
+  const sec = Math.floor((left % 60000) / 1000);
+
+  const pad = n => String(n).padStart(2,'0');
+  const timer = document.getElementById('ad-window-timer');
+  if(timer) timer.textContent = `Reset: ${pad(h)}:${pad(m)}:${pad(sec)}`;
+
+  if(left <= 0) updateAdsUI();
+}, 1000);
+
+function promptConsentForAd(){
+  const s = getAdState();
+  if(s.count >= MAX_ADS_WINDOW){
+    showToast(currentLang==='fa'?'سقف ۲۰ تبلیغ در این ۵ ساعت پر شده است':'20 ads limit reached for this 5-hour window');
+    return;
+  }
+  document.getElementById('adsgram-consent-modal').classList.add('show');
+}
+function closeConsentModal(){
+  document.getElementById('adsgram-consent-modal').classList.remove('show');
+}
+
+function playAdsgramRewardedAd(){
+  closeConsentModal();
+  showToast('Loading Adsgram Sponsor...');
+
+  if(AdController){
+    AdController.show().then(()=>{
+      grantAdReward();
+    }).catch(()=>{
+      grantAdReward();
+    });
+  } else {
+    setTimeout(grantAdReward, 1200);
+  }
+}
+
+function grantAdReward(){
+  const s = getAdState();
+  s.count = (s.count || 0) + 1;
+  saveAdState(s);
+
+  energy = MAX_ENERGY;
+  stars += 50;
+  updateEnergyUI();
+  updateStarsUI();
+  updateAdsUI();
+  showToast(currentLang==='fa'?'⚡ انرژی ۱۰۰٪ شارژ شد و +۵۰ ستاره اضافه شد!':'⚡ Energy Refilled 100% + 50 Stars Added!');
+  logActivity('refill_ad', 'Watched Adsgram rewarded ad (+50 stars & 100% refill)', 0);
+  syncFirebase();
+}
+
+// ═══════════════════════════════════════════════════════
+//  STAR TAPPER & CONVERSION (۱۰۰ ستاره = ۰.۱۰$ دلار)
+// ═══════════════════════════════════════════════════════
+let tapDebounceTimer = null;
+
+function handleStarTap(e){
+  if(energy <= 0){
+    promptConsentForAd();
+    return;
+  }
+  energy = Math.max(0, energy - 1);
+  stars += 1;
+  updateEnergyUI();
+  updateStarsUI();
+
+  // Floating +1 Star particle
+  const btn = document.getElementById('star-tap-btn');
+  const num = document.createElement('div');
+  num.className = 'floating-tap-num';
+  num.textContent = '+1 ⭐';
+  num.style.left = (Math.random()*40 + 40) + 'px';
+  num.style.top = (Math.random()*40 + 30) + 'px';
+  btn.appendChild(num);
+  setTimeout(()=>num.remove(), 800);
+
+  if(TG?.HapticFeedback) TG.HapticFeedback.impactOccurred('light');
+
+  // Debounced auto-sync to Firebase
+  clearTimeout(tapDebounceTimer);
+  tapDebounceTimer = setTimeout(syncFirebase, 2000);
+}
+
+function updateEnergyUI(){
+  document.getElementById('energy-txt-display').textContent = `${energy} / ${MAX_ENERGY}`;
+  const pct = (energy / MAX_ENERGY) * 100;
+  document.getElementById('energy-meter-fill').style.width = `${pct}%`;
+}
+
+function updateStarsUI(){
+  document.getElementById('stars-count-val').textContent = `${stars} STARS`;
+}
+
+setInterval(()=>{
+  if(energy < MAX_ENERGY){
+    energy++;
+    updateEnergyUI();
+  }
+}, 4000);
+
+// تبدیل ۱۰۰ ستاره = ۰.۱۰$ دلار
+function convertStarsToCash(){
+  if(stars < 100){
+    showToast(currentLang==='fa'?`حداقل ۱۰۰ ستاره برای تبدیل لازم است (شما ${stars} ستاره دارید)`:`Minimum 100 stars required to convert (You have ${stars})`);
+    return;
+  }
+  const cash = +(Math.floor(stars / 100) * 0.10).toFixed(2);
+  const convertedStars = Math.floor(stars / 100) * 100;
+  stars -= convertedStars;
+  balance += cash;
+  updateStarsUI();
+  updateBalanceUI();
+  showToast(currentLang==='fa'?`✨ ${convertedStars} ستاره به +$${cash} دلار تبدیل شد!`:`✨ ${convertedStars} Stars converted to +$${cash} Cash!`);
+  logActivity('convert_stars', `Converted ${convertedStars} Stars to $${cash}`, cash);
+  syncFirebase();
+}
+
+// ═══════════════════════════════════════════════════════
+//  10 LANGUAGES CONFIGURATION
+// ═══════════════════════════════════════════════════════
+const LANGS = [
+  {code:'en', name:'English',    native:'English',    flag:'🇬🇧'},
+  {code:'fa', name:'Persian',    native:'فارسی',       flag:'🇮🇷'},
+  {code:'ar', name:'Arabic',     native:'العربية',     flag:'🇸🇦'},
+  {code:'es', name:'Spanish',    native:'Español',     flag:'🇪🇸'},
+  {code:'ru', name:'Russian',    native:'Русский',     flag:'🇷🇺'},
+  {code:'fr', name:'French',     native:'Français',    flag:'🇫🇷'},
+  {code:'hi', name:'Hindi',      native:'हिन्दी',      flag:'🇮🇳'},
+  {code:'pt', name:'Portuguese', native:'Português',   flag:'🇧🇷'},
+  {code:'tr', name:'Turkish',    native:'Türkçe',      flag:'🇹🇷'},
+  {code:'id', name:'Indonesian', native:'Bahasa',      flag:'🇮🇩'},
+];
+
+const I18N = {
+  en:{
+    bal_label:'AVAILABLE BALANCE', bal_sub:'Instant withdrawal to USDT or PayPal (Min $40)',
+    btn_convert:'✨ 100 Stars = $0.10', btn_refill:'⚡ Refill (20/20 Left)',
+    refill_info:'20 Ad Refills / 5 Hours',
+    guide_title:'How It Works (3 Easy Steps)',
+    step1:'Tap Star to collect stars', step2:'100 Stars = $0.10 Cash', step3:'Withdraw at $40 to USDT',
+    official_channels_title:'Official Partner Channels',
+    ch1_name:'StarTap Official Channel ⭐', ch2_name:'StarTap Payout Proofs 📢',
+    join:'Join', done:'✓ Done',
+    invite_title:'Invite Friends & Earn', inv_sub:'Get paid instantly for every single friend you invite',
+    copy_btn:'Copy', share_btn:'Share with Friends on Telegram',
+    withdraw_title:'Withdraw Funds', min_tag:'Min $40', w_btn:'Submit Withdrawal Request',
+    nav_earn:'Earn', nav_invite:'Invite', nav_withdraw:'Withdraw',
+    modal_refill_head:'Refill 100% Energy?',
+    modal_refill_desc:'Watch a short sponsor video to instantly refill 100% energy and receive +50 bonus stars!',
+    modal_cancel:'Cancel', modal_watch:'Watch Video',
+    lock_title:'Channel Verification Required',
+    lock_desc:'You must join both official channels below to unlock the app, start tapping stars, and claim your $5.00 Welcome Bonus!',
+    lock_ch1:'1. StarTap Official Channel ⭐', lock_ch2:'2. StarTap Payout Proofs 📢',
+    unlock_btn:'🔓 Check & Unlock App'
+  },
+  fa:{
+    bal_label:'موجودی کل قابل برداشت', bal_sub:'برداشت آنی به تتر USDT یا پی‌پال (حداقل ۴۰$)',
+    btn_convert:'✨ ۱۰۰ ستاره = ۰.۱۰$', btn_refill:'⚡ شارژ انرژی (۲۰/۲۰)',
+    refill_info:'۲۰ بار شارژ تبلیغ در هر ۵ ساعت',
+    guide_title:'طرز کار ساده برنامه (۳ مرحله)',
+    step1:'روی ستاره تپ کنید و ستاره بگیرید', step2:'هر ۱۰۰ ستاره = ۰.۱۰$ دلار', step3:'برداشت در ۴۰$ به تتر USDT',
+    official_channels_title:'کانال‌های رسمی تلگرام',
+    ch1_name:'کانال رسمی StarTap ⭐', ch2_name:'کانال واریزی‌های StarTap 📢',
+    join:'عضویت', done:'✓ انجام شد',
+    invite_title:'دعوت دوستان و کسب درآمد', inv_sub:'به ازای هر دوست ۲ دلار مستقیم و آنی پاداش بگیرید',
+    copy_btn:'کپی', share_btn:'اشتراک‌گذاری با دوستان در تلگرام',
+    withdraw_title:'برداشت موجودی', min_tag:'حداقل ۴۰$', w_btn:'ثبت درخواست برداشت',
+    nav_earn:'کسب درآمد', nav_invite:'دعوت', nav_withdraw:'برداشت',
+    modal_refill_head:'شارژ ۱۰۰٪ انرژی تپ؟',
+    modal_refill_desc:'یک ویدیوی کوتاه اسپانسر را مشاهده کنید تا انرژی شما ۱۰۰٪ شارژ شده و +۵۰ ستاره اضافه دریافت کنید.',
+    modal_cancel:'انصراف', modal_watch:'مشاهده ویدیو',
+    lock_title:'تایید عضویت اجباری کانال‌ها',
+    lock_desc:'برای باز شدن قفل برنامه، شروع تپ ستاره و دریافت ۵.۰۰$ بونس، باید ابتدا در هر ۲ کانال زیر عضو شوید:',
+    lock_ch1:'۱. کانال رسمی StarTap ⭐', lock_ch2:'۲. کانال واریزی‌های StarTap 📢',
+    unlock_btn:'🔓 بررسی و باز کردن قفل برنامه'
+  },
+  ar:{
+    bal_label:'الرصيد المتاح', bal_sub:'سحب فوري إلى USDT أو PayPal (الحد الأدنى $40)',
+    btn_convert:'✨ 100 نجمة = $0.10', btn_refill:'⚡ إعادة شحن الطاقة',
+    refill_info:'20 إعلان كل 5 ساعات',
+    guide_title:'كيف يعمل التطبيق (3 خطوات)',
+    step1:'اضغط على النجمة واجمع النجوم', step2:'كل 100 نجمة = $0.10', step3:'اسحب الرصيد عند $40',
+    official_channels_title:'القنوات الرسمية',
+    ch1_name:'قناة StarTap الرسمية ⭐', ch2_name:'قناة إثباتات السحب 📢',
+    join:'انضمام', done:'✓ تم',
+    invite_title:'ادعُ الأصدقاء واكسب', inv_sub:'احصل على $2.00 فوراً لكل صديق تدعوه',
+    copy_btn:'نسخ', share_btn:'مشاركة مع الأصدقاء',
+    withdraw_title:'سحب الرصيد', min_tag:'الحد الأدنى $40', w_btn:'تقديم طلب السحب',
+    nav_earn:'كسب', nav_invite:'دعوة', nav_withdraw:'سحب',
+    modal_refill_head:'شحن الطاقة 100%؟',
+    modal_refill_desc:'شاهد فيديو قصير لشحن الطاقة بالكامل والحصول على 50 نجمة إضافية!',
+    modal_cancel:'إلغاء', modal_watch:'مشاهدة',
+    lock_title:'مطلوب التحقق من القنوات',
+    lock_desc:'يجب عليك الانضمام إلى القناتين أدناه لفتح التطبيق وبدء كسب الأرباح!',
+    lock_ch1:'1. قناة StarTap الرسمية ⭐', lock_ch2:'2. قناة إثباتات السحب 📢',
+    unlock_btn:'🔓 التحقق وفتح التطبيق'
+  },
+  es:{
+    bal_label:'SALDO DISPONIBLE', bal_sub:'Retiro instantáneo a USDT o PayPal (Mín $40)',
+    btn_convert:'✨ 100 Estrellas = $0.10', btn_refill:'⚡ Recargar Energía',
+    refill_info:'20 Anuncios / 5 Horas',
+    guide_title:'Cómo Funciona (3 Pasos Fáciles)',
+    step1:'Toca la estrella para juntar estrellas', step2:'100 Estrellas = $0.10 Cash', step3:'Retira fondos a partir de $40',
+    official_channels_title:'Canales Oficiales',
+    ch1_name:'Canal Oficial StarTap ⭐', ch2_name:'Canal de Pagos StarTap 📢',
+    join:'Unirse', done:'✓ Hecho',
+    invite_title:'Invita Amigos y Gana', inv_sub:'Gana $2.00 por cada amigo invitado',
+    copy_btn:'Copiar', share_btn:'Compartir con amigos',
+    withdraw_title:'Retirar Fondos', min_tag:'Mín $40', w_btn:'Enviar Solicitud de Retiro',
+    nav_earn:'Ganar', nav_invite:'Invitar', nav_withdraw:'Retirar',
+    modal_refill_head:'¿Recargar 100% de Energía?',
+    modal_refill_desc:'¡Mira un video corto para recargar energía al 100% y ganar +50 estrellas extra!',
+    modal_cancel:'Cancelar', modal_watch:'Ver Video',
+    lock_title:'Verificación de Canales Requerida',
+    lock_desc:'¡Debes unirte a ambos canales oficiales para desbloquear la app y comenzar a ganar!',
+    lock_ch1:'1. Canal Oficial StarTap ⭐', lock_ch2:'2. Canal de Pagos StarTap 📢',
+    unlock_btn:'🔓 Verificar y Desbloquear'
+  },
+  ru:{
+    bal_label:'ДОСТУПНЫЙ БАЛАНС', bal_sub:'Мгновенный вывод на USDT или PayPal (Мин $40)',
+    btn_convert:'✨ 100 Звёзд = $0.10', btn_refill:'⚡ Пополнить энергию',
+    refill_info:'20 реклам каждые 5 часов',
+    guide_title:'Как это работает (3 простых шага)',
+    step1:'Тапай звезду и собирай звёзды', step2:'100 Звёзд = $0.10', step3:'Выводи от $40 на USDT',
+    official_channels_title:'Официальные каналы',
+    ch1_name:'Официальный канал StarTap ⭐', ch2_name:'Канал выплат StarTap 📢',
+    join:'Вступить', done:'✓ Готово',
+    invite_title:'Приглашай друзей и зарабатывай', inv_sub:'Получай $2.00 за каждого друга',
+    copy_btn:'Копировать', share_btn:'Поделиться с друзьями',
+    withdraw_title:'Вывод средств', min_tag:'Мин $40', w_btn:'Отправить заявку на вывод',
+    nav_earn:'Заработок', nav_invite:'Друзья', nav_withdraw:'Вывод',
+    modal_refill_head:'Пополнить 100% энергии?',
+    modal_refill_desc:'Посмотрите короткое видео спонсора, чтобы восполнить энергию и получить +50 звёзд!',
+    modal_cancel:'Отмена', modal_watch:'Смотреть',
+    lock_title:'Требуется подписка на каналы',
+    lock_desc:'Подпишитесь на оба официальных канала, чтобы разблокировать приложение!',
+    lock_ch1:'1. Официальный канал StarTap ⭐', lock_ch2:'2. Канал выплат StarTap 📢',
+    unlock_btn:'🔓 Проверить и открыть'
+  },
+  fr:{
+    bal_label:'SOLDE DISPONIBLE', bal_sub:'Retrait instantané vers USDT ou PayPal (Min $40)',
+    btn_convert:'✨ 100 Étoiles = $0.10', btn_refill:'⚡ Recharger l\'énergie',
+    refill_info:'20 pubs / 5 heures',
+    guide_title:'Comment ça marche (3 étapes)',
+    step1:'Tapez l\'étoile pour collecter', step2:'100 Étoiles = $0.10 Cash', step3:'Retrait à partir de $40',
+    official_channels_title:'Canaux Officiels',
+    ch1_name:'Canal Officiel StarTap ⭐', ch2_name:'Canal des Paiements StarTap 📢',
+    join:'Rejoindre', done:'✓ Fait',
+    invite_title:'Invitez des Amis & Gagnez', inv_sub:'Gagnez $2.00 par ami invité',
+    copy_btn:'Copier', share_btn:'Partager avec des amis',
+    withdraw_title:'Retirer des Fonds', min_tag:'Min $40', w_btn:'Soumettre la demande',
+    nav_earn:'Gagner', nav_invite:'Inviter', nav_withdraw:'Retrait',
+    modal_refill_head:'Recharger 100% d\'énergie ?',
+    modal_refill_desc:'Regardez une courte vidéo sponsor pour recharger votre énergie à 100% et recevoir +50 étoiles !',
+    modal_cancel:'Annuler', modal_watch:'Regarder',
+    lock_title:'Vérification des canaux requise',
+    lock_desc:'Rejoignez les deux canaux officiels pour déverrouiller l\'application !',
+    lock_ch1:'1. Canal Officiel StarTap ⭐', lock_ch2:'2. Canal des Paiements StarTap 📢',
+    unlock_btn:'🔓 Vérifier et Déverrouiller'
+  },
+  hi:{
+    bal_label:'उपलब्ध शेष', bal_sub:'USDT या PayPal पर तत्काल निकासी (न्यूनतम $40)',
+    btn_convert:'✨ 100 स्टार्स = $0.10', btn_refill:'⚡ ऊर्जा रीचार्ज करें',
+    refill_info:'हर 5 घंटे में 20 विज्ञापन',
+    guide_title:'यह कैसे काम करता है (3 सरल चरण)',
+    step1:'स्टार पर टैप करें और स्टार्स जमा करें', step2:'100 स्टार्स = $0.10 नकद', step3:'$40 पर निकासी करें',
+    official_channels_title:'आधिकारिक चैनल',
+    ch1_name:'StarTap आधिकारिक चैनल ⭐', ch2_name:'StarTap भुगतान प्रमाण चैनल 📢',
+    join:'जुड़ें', done:'✓ हो गया',
+    invite_title:'मित्रों को आमंत्रित करें और कमाएं', inv_sub:'प्रत्येक मित्र के लिए $2.00 पाएं',
+    copy_btn:'कॉपी', share_btn:'मित्रों के साथ साझा करें',
+    withdraw_title:'نیکاسی अनुरोध', min_tag:'न्यूनतम $40', w_btn:'نیکاسی अनुरोध सबमिट करें',
+    nav_earn:'कमाएं', nav_invite:'आमंत्रण', nav_withdraw:'نیکاسی',
+    modal_refill_head:'100% ऊर्जा रीचार्ज करें?',
+    modal_refill_desc:'ऊर्जा को 100% रीचार्ज करने और +50 बोनस स्टार्स पाने के लिए वीडियो देखें!',
+    modal_cancel:'रद्द करें', modal_watch:'देखें',
+    lock_title:'चैनल सत्यापन आवश्यक है',
+    lock_desc:'ऐप अनलॉक करने के लिए दोनों आधिकारिक चैनलों से जुड़ें!',
+    lock_ch1:'1. StarTap आधिकारिक चैनल ⭐', lock_ch2:'2. StarTap भुगतान प्रमाण चैनल 📢',
+    unlock_btn:'🔓 चेक करें और अनलॉक करें'
+  },
+  pt:{
+    bal_label:'SALDO DISPONÍVEL', bal_sub:'Saque instantâneo para USDT ou PayPal (Mín $40)',
+    btn_convert:'✨ 100 Estrelas = $0.10', btn_refill:'⚡ Recarregar Energia',
+    refill_info:'20 Anúncios / 5 Horas',
+    guide_title:'Como Funciona (3 Passos Fácis)',
+    step1:'Toque na estrela para coletar', step2:'100 Estrelas = $0.10 Cash', step3:'Saque a partir de $40',
+    official_channels_title:'Canais Oficiais',
+    ch1_name:'Canal Oficial StarTap ⭐', ch2_name:'Canal de Pagamentos StarTap 📢',
+    join:'Entrar', done:'✓ Feito',
+    invite_title:'Convide Amigos e Ganhe', inv_sub:'Ganhe $2.00 por cada amigo convidado',
+    copy_btn:'Copiar', share_btn:'Compartilhar com amigos',
+    withdraw_title:'Sacar Fundos', min_tag:'Mín $40', w_btn:'Enviar Pedido de Saque',
+    nav_earn:'Ganhar', nav_invite:'Convidar', nav_withdraw:'Sacar',
+    modal_refill_head:'Recarregar 100% de Energia?',
+    modal_refill_desc:'Assista a um vídeo curto para recarregar sua energia a 100% e ganhar +50 estrelas bônus!',
+    modal_cancel:'Cancelar', modal_watch:'Assistir',
+    lock_title:'Verificação de Canais Obrigatória',
+    lock_desc:'Entre nos dois canais oficiais para desbloquear o aplicativo!',
+    lock_ch1:'1. Canal Oficial StarTap ⭐', lock_ch2:'2. Canal de Pagamentos StarTap 📢',
+    unlock_btn:'🔓 Verificar e Desbloquear'
+  },
+  tr:{
+    bal_label:'KULLANILABİLİR BAKİYE', bal_sub:'USDT veya PayPal\'a anında çekim (Min $40)',
+    btn_convert:'✨ 100 Yıldız = $0.10', btn_refill:'⚡ Enerjiyi Doldur',
+    refill_info:'5 Saatte 20 Reklam',
+    guide_title:'Nasıl Çalışır? (3 Kolay Adım)',
+    step1:'Yıldız toplamak için tıkla', step2:'100 Yıldız = $0.10 Nakit', step3:'$40 olunca çek',
+    official_channels_title:'Resmi Kanallar',
+    ch1_name:'StarTap Resmi Kanal ⭐', ch2_name:'StarTap Ödeme Kanıtları 📢',
+    join:'Katıl', done:'✓ Tamam',
+    invite_title:'Arkadaşlarını Davet Et', inv_sub:'Davet ettiğin her arkadaş için $2.00 kazan',
+    copy_btn:'Kopyala', share_btn:'Arkadaşlarla Paylaş',
+    withdraw_title:'Para Çek', min_tag:'Min $40', w_btn:'Çekim Talebi Gönder',
+    nav_earn:'Kazan', nav_invite:'Davet', nav_withdraw:'Çekim',
+    modal_refill_head:'%100 Enerji Doldurulsun mu?',
+    modal_refill_desc:'Enerjinizi anında doldurmak ve +50 bonus yıldız kazanmak için kısa bir video izleyin!',
+    modal_cancel:'İptal', modal_watch:'İzle',
+    lock_title:'Kanal Doğrulaması Gerekli',
+    lock_desc:'Uygulamanın kilidini açmak için aşağıdaki iki resmi kanala katılmalısınız!',
+    lock_ch1:'1. StarTap Resmi Kanal ⭐', lock_ch2:'2. StarTap Ödeme Kanıtları 📢',
+    unlock_btn:'🔓 Kontrol Et ve Aç'
+  },
+  id:{
+    bal_label:'SALDO TERSEDIA', bal_sub:'Penarikan instan ke USDT atau PayPal (Min $40)',
+    btn_convert:'✨ 100 Bintang = $0.10', btn_refill:'⚡ Isi Ulang Energi',
+    refill_info:'20 Iklan / 5 Jam',
+    guide_title:'Cara Kerja (3 Langkah Mudah)',
+    step1:'Ketuk bintang untuk mengumpulkan', step2:'100 Bintang = $0.10 Cash', step3:'Tarik saldo saat $40',
+    official_channels_title:'Saluran Resmi',
+    ch1_name:'Saluran Resmi StarTap ⭐', ch2_name:'Saluran Bukti Pembayaran 📢',
+    join:'Gabung', done:'✓ Selesai',
+    invite_title:'Undang Teman & Hasilkan', inv_sub:'Dapatkan $2.00 untuk setiap teman yang diundang',
+    copy_btn:'Salin', share_btn:'Bagikan dengan teman',
+    withdraw_title:'Tarik Saldo', min_tag:'Min $40', w_btn:'Kirim Permintaan Penarikan',
+    nav_earn:'Hasilkan', nav_invite:'Undang', nav_withdraw:'Tarik',
+    modal_refill_head:'Isi Ulang 100% Energi?',
+    modal_refill_desc:'Tonton video singkat untuk mengisi ulang energi hingga 100% dan dapatkan +50 bintang bonus!',
+    modal_cancel:'Batal', modal_watch:'Tonton',
+    lock_title:'Verifikasi Saluran Diperlukan',
+    lock_desc:'Anda harus bergabung dengan kedua saluran resmi untuk membuka kunci aplikasi!',
+    lock_ch1:'1. Saluran Resmi StarTap ⭐', lock_ch2:'2. Saluran Bukti Pembayaran 📢',
+    unlock_btn:'🔓 Periksa & Buka Kunci'
+  }
+};
+
+function t(k){ return (I18N[currentLang] || I18N.en)[k] || I18N.en[k] || k; }
+
+function applyTranslations(){
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = (currentLang==='fa'||currentLang==='ar') ? 'rtl' : 'ltr';
+  document.getElementById('lang-code-display').textContent = currentLang.toUpperCase();
+
+  const map = {
+    'txt-bal-label':'bal_label','txt-bal-desc':'bal_sub','txt-btn-convert':'btn_convert',
+    'txt-btn-refill':'btn_refill','txt-refill-info':'refill_info','txt-guide-title':'guide_title',
+    'txt-step1':'step1','txt-step2':'step2','txt-step3':'step3',
+    'txt-official-channels-title':'official_channels_title',
+    'txt-ch1-name':'ch1_name','txt-ch2-name':'ch2_name','txt-invite-title':'invite_title',
+    'txt-inv-sub':'inv_sub','txt-copy-btn':'copy_btn','txt-share-btn':'share_btn',
+    'txt-withdraw-title':'withdraw_title','txt-min-tag':'min_tag','txt-w-btn':'w_btn',
+    'txt-nav-earn':'nav_earn','txt-nav-invite':'nav_invite','txt-nav-withdraw':'nav_withdraw',
+    'txt-modal-refill-head':'modal_refill_head','txt-modal-refill-desc':'modal_refill_desc',
+    'txt-modal-cancel':'modal_cancel','txt-modal-watch':'modal_watch',
+    'txt-lock-title':'lock_title','txt-lock-desc':'lock_desc',
+    'txt-lock-ch1':'lock_ch1','txt-lock-ch2':'lock_ch2','txt-unlock-btn':'unlock_btn'
+  };
+  Object.entries(map).forEach(([id,key])=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = t(key);
+  });
+  updateChannelsUI();
+  updateAdsUI();
+  updateInviteStatsUI();
+}
+
+function openLanguageModal(){
+  const grid = document.getElementById('lang-grid-container');
+  grid.innerHTML = LANGS.map(l => `
+    <button class="lang-select-btn ${l.code===currentLang?'active':''}" onclick="selectLangCode('${l.code}')">
+      <span style="font-size:1.2rem;">${l.flag}</span>
+      <span>${l.native}</span>
+    </button>
+  `).join('');
+  document.getElementById('lang-modal').classList.add('show');
+}
+function closeLangModal(){
+  document.getElementById('lang-modal').classList.remove('show');
+}
+function selectLangCode(code){
+  currentLang = code;
+  closeLangModal();
+  applyTranslations();
+}
+
+// ═══════════════════════════════════════════════════════
+//  CHANNELS TASKS
+// ═══════════════════════════════════════════════════════
+function handleChannelClick(id, url, reward, btn){
+  if(completedTasks.includes(id)) return;
+  if(TG) TG.openTelegramLink(url);
+  else window.open(url, '_blank');
+
+  setTimeout(()=>{
+    if(!completedTasks.includes(id)){
+      completedTasks.push(id);
+      balance += reward;
+      updateBalanceUI();
+      btn.className = 'btn-ch-done';
+      btn.textContent = t('done');
+      showToast(`+$${reward.toFixed(2)} Added! ✅`);
+      logActivity('task_complete', `Joined partner channel (${id})`, reward);
+      syncFirebase();
+      updateChannelsUI();
+    }
+  }, 2500);
+}
+
+function updateChannelsUI(){
+  const count = completedTasks.filter(k=>k==='c_startap'||k==='c_payout').length;
+  document.getElementById('channels-badge-counter').textContent = `${count}/2`;
+  if(completedTasks.includes('c_startap')){
+    const b1 = document.getElementById('btn-join-ch1');
+    if(b1){ b1.className='btn-ch-done'; b1.textContent=t('done'); }
+  }
+  if(completedTasks.includes('c_payout')){
+    const b2 = document.getElementById('btn-join-ch2');
+    if(b2){ b2.className='btn-ch-done'; b2.textContent=t('done'); }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  INVITE SYSTEM
+// ═══════════════════════════════════════════════════════
+function copyInviteLink(){
+  const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+  navigator.clipboard.writeText(link).then(()=>showToast(currentLang==='fa'?'لینک کپی شد!':'Link Copied! 📋'));
+}
+function shareInviteLink(){
+  const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+  const text = encodeURIComponent('🚀 Join StarTap 🌟 and earn real crypto rewards on Telegram!');
+  if(TG) TG.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`);
+  else window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`,'_blank');
+}
+
+function updateInviteStatsUI(){
+  const earnedEl = document.getElementById('inv-total-earned-display');
+  if(earnedEl) earnedEl.textContent = `$${inviteEarned.toFixed(2)}`;
+  const countEl = document.getElementById('inv-friends-count-display');
+  if(countEl) countEl.textContent = `${inviteCount} ${currentLang==='fa'?'نفر':'Friends'}`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  WITHDRAW (حداقل ۴۰$) & TELEGRAM PAYOUT REPORT
+// ═══════════════════════════════════════════════════════
+function selectMethod(el, m){
+  document.querySelectorAll('.method-card-pill').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  selectedMethod = m;
+}
+
+function submitWithdraw(){
+  const amt = parseFloat(document.getElementById('w-amount').value);
+  const addr = document.getElementById('w-addr').value.trim();
+
+  if(!addr || isNaN(amt) || amt <= 0){ showToast(currentLang==='fa'?'لطفاً تمام فیلدها را پر کنید':'Please fill all fields'); return; }
+  if(amt < 40){ showToast(currentLang==='fa'?'حداقل برداشت ۴۰ دلار است':'Minimum withdrawal is $40'); return; }
+  if(amt > balance){ showToast(currentLang==='fa'?'موجودی کافی نیست':'Insufficient balance'); return; }
+
+  balance -= amt;
+  updateBalanceUI();
+
+  const wid = String(Date.now());
+  const entry = {
+    id: wid,
+    withdrawalId: wid,
+    userId: userId,
+    name: userName,
+    method: selectedMethod.toUpperCase().replace('_',' '),
+    amount: amt,
+    address: addr,
+    date: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+
+  // Save withdrawal to Firebase Realtime Database
+  saveWithdrawalToFirebase(entry);
+  sendPayoutNoticeToChannel(entry);
+  logActivity('withdraw_request', `Submitted withdrawal of $${amt.toFixed(2)} (${entry.method})`, -amt);
+
+  showToast(currentLang==='fa'?'درخواست ثبت شد ✅':'Withdrawal Submitted! ✅');
+  document.getElementById('w-amount').value = '';
+  document.getElementById('w-addr').value = '';
+  syncFirebase();
+}
+
+async function saveWithdrawalToFirebase(entry){
+  try{
+    await fetch(`${DB_URL}withdrawals/${encodeURIComponent(userId)}/${encodeURIComponent(entry.id)}.json`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(entry)
+    });
+  }catch(e){
+    console.error('Save withdrawal error:', e);
+  }
+}
+
+async function sendPayoutNoticeToChannel(entry){
+  try{
+    const text = 
+`💎 <b>MajorEarning — New Payout Report</b> 💎
+
+👤 <b>User Name:</b> ${userName}
+🆔 <b>User ID:</b> <code>${userId}</code>
+💵 <b>Withdrawal Amount:</b> <b>$${entry.amount.toFixed(2)}</b>
+🌐 <b>Network / Method:</b> <b>${entry.method}</b>
+📍 <b>Wallet Address:</b> <code>${entry.address}</code>
+📊 <b>Payment Status:</b> <b>Paid / Completed ✅</b>
+🕒 <b>Date:</b> ${entry.date}
+
+🚀 <b>Start Earning Real Money:</b>`;
+
+    await fetch(`https://api.telegram.org/bot${PAYOUT_BOT_TOKEN}/sendMessage`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        chat_id: PAYOUT_CHANNEL_ID,
+        text: text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: '🚀 Start Earning',
+                url: 'https://t.me/StarTap0_Bot'
+              }
+            ]
+          ]
+        }
+      })
+    });
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+//  FIREBASE REALTIME DATABASE SYNC & ACTIVITY LOGGER
+// ═══════════════════════════════════════════════════════
+async function logActivity(action, detail, amount){
+  if(!userId) return;
+  try{
+    const actId = 'act_' + Date.now();
+    const payload = {
+      userId,
+      name: userName,
+      action,
+      detail,
+      amount: amount || 0,
+      timestamp: Date.now()
+    };
+    await fetch(`${DB_URL}activities/${encodeURIComponent(userId)}/${encodeURIComponent(actId)}.json`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  }catch(e){}
+}
+
+async function loadUserData(){
+  try{
+    const res = await fetch(DB_URL + 'users/' + encodeURIComponent(userId) + '.json');
+    if(res.ok){
+      const data = await res.json();
+      if(data){
+        if(typeof data.balance === 'number') balance = data.balance;
+        if(typeof data.stars === 'number') stars = data.stars;
+        if(typeof data.energy === 'number') energy = data.energy;
+        if(Array.isArray(data.completedTasks)) completedTasks = data.completedTasks;
+        if(data.gateUnlocked) isGateUnlocked = true;
+        if(typeof data.inviteCount === 'number') inviteCount = data.inviteCount;
+        if(typeof data.inviteEarned === 'number') inviteEarned = data.inviteEarned;
+      } else {
+        // First-time user registration in Firebase
+        await handleNewUserRegistration();
+      }
+    }
+  }catch(e){
+    console.error('loadUserData error:', e);
+  }
+  updateBalanceUI();
+  updateEnergyUI();
+  updateStarsUI();
+  updateChannelsUI();
+  updateInviteStatsUI();
+  checkGateLockState();
+}
+
+async function handleNewUserRegistration(){
+  // Check if user came via referral link
+  if(referrerId && referrerId !== userId){
+    try{
+      const refRes = await fetch(`${DB_URL}users/${encodeURIComponent(referrerId)}.json`);
+      if(refRes.ok){
+        const refData = await refRes.json();
+        if(refData){
+          const newRefBal = +(Number(refData.balance || 5.00) + 2.00).toFixed(2);
+          const newRefCount = (refData.inviteCount || 0) + 1;
+          const newRefEarned = +(Number(refData.inviteEarned || 0) + 2.00).toFixed(2);
+          await fetch(`${DB_URL}users/${encodeURIComponent(referrerId)}.json`, {
+            method: 'PATCH',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              balance: newRefBal,
+              inviteCount: newRefCount,
+              inviteEarned: newRefEarned
+            })
+          });
+          // Log referral activity for referrer
+          const refActId = 'act_' + Date.now();
+          await fetch(`${DB_URL}activities/${encodeURIComponent(referrerId)}/${encodeURIComponent(refActId)}.json`, {
+            method: 'PUT',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              userId: referrerId,
+              name: refData.name || 'User',
+              action: 'referral_bonus',
+              detail: `Referred new friend (ID: ${userId})`,
+              amount: 2.00,
+              timestamp: Date.now()
+            })
+          });
+        }
+      }
+    }catch(e){
+      console.error('Referral credit error:', e);
+    }
+  }
+
+  // Save new user profile
+  await syncFirebase();
+  logActivity('welcome_bonus', 'Received $5.00 Welcome Bonus', 5.00);
+}
+
+async function syncFirebase(){
+  if(!userId) return;
+  try{
+    const adState = getAdState();
+    await fetch(DB_URL + 'users/' + encodeURIComponent(userId) + '.json', {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id: userId,
+        name: userName,
+        balance: +balance.toFixed(2),
+        stars: stars || 0,
+        energy: energy || 0,
+        completedTasks,
+        gateUnlocked: isGateUnlocked,
+        adsWatched: adState.count || 0,
+        adsWindowReset: adState.reset || 0,
+        inviteCount: inviteCount || 0,
+        inviteEarned: inviteEarned || 0,
+        referredBy: referrerId || null,
+        lastSeen: Date.now()
+      })
+    });
+  }catch(e){
+    console.error('syncFirebase error:', e);
+  }
+}
+
+function updateBalanceUI(){
+  document.getElementById('user-balance-number').textContent = '$' + balance.toFixed(2);
+}
+
+// ════════ TAB SWITCHING (با نوار ناوبری ۳ تایی فیکس شده در پایین صفحه) ════════
+function switchTab(tName){
+  document.querySelectorAll('.tab-btn-item').forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById('btn-tab-'+tName);
+  if(btn) btn.classList.add('active');
+
+  document.getElementById('view-tab-earn').style.display     = (tName==='earn')?'block':'none';
+  document.getElementById('view-tab-invite').style.display   = (tName==='invite')?'block':'none';
+  document.getElementById('view-tab-withdraw').style.display = (tName==='withdraw')?'block':'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+
+// Boot
+applyTranslations();
+loadUserData();
+document.getElementById('invite-link-val').textContent = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+</script>
+</body>
+</html>
