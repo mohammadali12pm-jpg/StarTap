@@ -6,7 +6,7 @@
 <title>StarTap 🌟 — Web3 Rewards &amp; Tapper</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <!-- Adsgram Official SDK -->
-<script src="https://sad.min.js?v=2"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet"/>
 <style>
 /* ═══════════════════════════════════════════════════════
@@ -1251,19 +1251,25 @@ const PAYOUT_BOT_TOKEN = '8986952597:AAFDnAUIVlnNwiB2RA6uSNhGJFVcR-tFusw';
 const PAYOUT_CHANNEL_ID = '@StarTap_Payout'; // کانال رسمی واریزی‌ها: https://t.me/StarTap_Payout
 
 const ADSGRAM_BLOCK_ID = '41842';
+let adWatching = false;
 let AdController = null;
 
-function getAdController(){
-  if(window.Adsgram){
-    try{
-      AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-    }catch(e){
-      console.warn('Adsgram init error:', e);
+// Initialize AdGram controller exactly like standard implementation
+async function initAdGram() {
+  try {
+    if (window.Adsgram) {
+      AdController = await window.Adsgram.init({
+        blockId: ADSGRAM_BLOCK_ID,
+        debug: false,
+        debugBannerType: "FullscreenMedia",
+      });
     }
+  } catch(e) {
+    console.warn('AdGram init failed:', e);
+    AdController = null;
   }
-  return AdController;
 }
-getAdController();
+initAdGram();
 
 let userId = '', userName = 'User';
 let referrerId = '';
@@ -1416,21 +1422,29 @@ function closeConsentModal(){
   document.getElementById('adsgram-consent-modal').classList.remove('show');
 }
 
-function playAdsgramRewardedAd(){
+async function playAdsgramRewardedAd(){
   closeConsentModal();
-  showToast(currentLang==='fa'?'در حال دریافت و نمایش ویدیوی Adsgram...':'Loading Adsgram Video Ad...');
+  if(adWatching) return;
 
-  const controller = getAdController() || (window.Adsgram ? window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }) : null);
+  if(!AdController && window.Adsgram){
+    await initAdGram();
+  }
 
-  if(controller && typeof controller.show === 'function'){
-    controller.show().then((result)=>{
-      grantAdReward();
-    }).catch((result)=>{
-      console.warn('Adsgram response:', result);
-      grantAdReward();
-    });
+  if(AdController){
+    adWatching = true;
+    showToast(currentLang==='fa'?'در حال نمایش ویدیوی اسپانسر...':'Showing Rewarded Video...');
+    AdController.show()
+      .then((result)=>{
+        adWatching = false;
+        grantAdReward();
+      })
+      .catch((result)=>{
+        adWatching = false;
+        console.warn('Adsgram video not completed:', result);
+        showToast(currentLang==='fa'?'برای دریافت پاداش باید ویدیو را تا آخر مشاهده کنید! ❌':'You must watch the full video to get rewards! ❌');
+      });
   } else {
-    setTimeout(grantAdReward, 1500);
+    showToast(currentLang==='fa'?'تبلیغ آماده پخش نیست. لطفاً مجدداً امتحان کنید':'Ad not ready, please try again');
   }
 }
 
@@ -2102,5 +2116,5 @@ loadUserData();
 const invBox = document.getElementById('invite-link-val');
 if(invBox) invBox.textContent = `https://t.me/StarTap0_Bot/app?startapp=${userId}`;
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a27f221a3b550717',t:'MTc4NjE5ODUyNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
