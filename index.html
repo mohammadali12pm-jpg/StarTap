@@ -1252,9 +1252,18 @@ const PAYOUT_CHANNEL_ID = '@StarTap_Payout'; // کانال رسمی واریزی
 
 const ADSGRAM_BLOCK_ID = '41842';
 let AdController = null;
-if(window.Adsgram){
-  try{ AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); }catch(e){}
+
+function getAdController(){
+  if(window.Adsgram){
+    try{
+      AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+    }catch(e){
+      console.warn('Adsgram init error:', e);
+    }
+  }
+  return AdController;
 }
+getAdController();
 
 let userId = '', userName = 'User';
 let referrerId = '';
@@ -1409,16 +1418,19 @@ function closeConsentModal(){
 
 function playAdsgramRewardedAd(){
   closeConsentModal();
-  showToast('Loading Adsgram Sponsor...');
+  showToast(currentLang==='fa'?'در حال دریافت و نمایش ویدیوی Adsgram...':'Loading Adsgram Video Ad...');
 
-  if(AdController){
-    AdController.show().then(()=>{
+  const controller = getAdController() || (window.Adsgram ? window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }) : null);
+
+  if(controller && typeof controller.show === 'function'){
+    controller.show().then((result)=>{
       grantAdReward();
-    }).catch(()=>{
+    }).catch((result)=>{
+      console.warn('Adsgram response:', result);
       grantAdReward();
     });
   } else {
-    setTimeout(grantAdReward, 1200);
+    setTimeout(grantAdReward, 1500);
   }
 }
 
