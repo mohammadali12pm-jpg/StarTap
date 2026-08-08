@@ -1277,6 +1277,8 @@ function initUser(){
   }
 
   document.getElementById('user-uid-txt').textContent = userId;
+  const invBox = document.getElementById('invite-link-val');
+  if(invBox) invBox.textContent = `https://t.me/StarTap0_Bot/app?startapp=${userId}`;
 }
 initUser();
 
@@ -1819,11 +1821,11 @@ function updateChannelsUI(){
 //  INVITE SYSTEM
 // ═══════════════════════════════════════════════════════
 function copyInviteLink(){
-  const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
-  navigator.clipboard.writeText(link).then(()=>showToast(currentLang==='fa'?'لینک کپی شد!':'Link Copied! 📋'));
+  const link = `https://t.me/StarTap0_Bot/app?startapp=${userId}`;
+  navigator.clipboard.writeText(link).then(()=>showToast(currentLang==='fa'?'لینک مستقیم کپی شد!':'Direct Link Copied! 📋'));
 }
 function shareInviteLink(){
-  const link = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+  const link = `https://t.me/StarTap0_Bot/app?startapp=${userId}`;
   const text = encodeURIComponent('🚀 Join StarTap 🌟 and earn real crypto rewards on Telegram!');
   if(TG) TG.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`);
   else window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`,'_blank');
@@ -2085,7 +2087,8 @@ function showToast(msg){
 // Boot
 applyTranslations();
 loadUserData();
-document.getElementById('invite-link-val').textContent = `https://t.me/${BOT_USERNAME}?start=${userId}`;
+const invBox = document.getElementById('invite-link-val');
+if(invBox) invBox.textContent = `https://t.me/StarTap0_Bot/app?startapp=${userId}`;
 </script>
 </body>
 </html>
